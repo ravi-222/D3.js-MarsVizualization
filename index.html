@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mars Crater Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            background-color: #000;
+            color: #C0C0C0;
+        }
+
+        h4, h5 {
+            color: #0078D7;
+        }
+
+        h6 {
+            color: #FF00FF;
+        }
+    
+        #mars {
+            width: 100%;
+            margin: auto;
+        }
+
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 10px 15px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 0;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0px 0px 15px 3px rgba(255, 215, 0, 0.5);
+            backface-visibility: hidden;
+            transform: translate3d(0, -10px, 0);
+            background: rgba(139, 0, 0, 0.9);
+            border: 1px solid #FFD700;
+        }
+
+        a {
+            color: #0078D7;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #FF00FF;
+        }
+
+        .writeup {
+            font-style: italic;
+        }
+        
+        .highlight {
+            font-weight: bold;
+            text-decoration: underline;
+            text-decoration-color: #FF00FF;
+            text-decoration-thickness: 2px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="section center">
+        <h4 class="text-center">Homework #5: Custom Visualization Design</h4>
+        <h5 class="text-center">Ravindersingh Anand - rganand@asu.edu</h5>
+    </div>
+    <div class="center">
+        <h6 class="text-center">MARS</h6>
+        <h6 class="text-center">Total craters: 384343</h6>
+        <h6 class="text-center">Named craters: 987</h6>
+        <h6 class="text-center">Showing 100 Largest Named Craters!</h6>
+    </div>
+    <div id="marsTooltip" class="tooltip" style="display: none;"></div>
+    <div class="container section" id="mars">
+        <svg>
+            <defs>
+                <filter id="innerShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+                    <feOffset in="blur" dx="2.5" dy="2.5" result="offsetBlur" />
+                    <feComposite in="offsetBlur" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="inverse" />
+                    <feFlood flood-color="black" flood-opacity="0.75" result="color" />
+                    <feComposite in="color" in2="inverse" operator="in" result="shadow" />
+                    <feComposite in="shadow" in2="SourceGraphic" operator="over" result="firstfilter" />
+                    <feBlend in="firstfilter" in2="SourceGraphic" mode="normal" />
+                </filter>
+            </defs>
+            <defs>
+                <linearGradient id="marsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8B0000; stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#A52A2A; stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#800000; stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <defs>
+                <radialGradient id="craterGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" style="stop-color:#B85C5C; stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#A04848; stop-opacity:1" />
+                </radialGradient>
+            </defs>    
+        </svg>
+    </div>
+    <div class="container section center writeup">
+        <p>This Mars visualization exemplifies a <span class="highlight">Modded Custom Visualization</span> as it enhances a standard geographical mapping
+        approach by integrating additional functionality tailored for a specific use case—representing the surface of Mars.
+        Utilizing D3.js, the project maps the coordinates of various Martian craters onto a 3D sphere, enabling interactive
+        rotation to simulate the experience of observing Mars as it might appear in space. This modification not only increases
+        the visualization's utility but also its educational value, making it more engaging for users.
+        
+        From the dataset, three attributes are used in the visualization:
+        <ul>
+            <li>
+                <span class="highlight">Name of the Craters:</span> Displayed through tooltips that appear when a user hovers over any crater, providing immediate and
+                intuitive access to identifying information.
+            </li>
+            <li>
+                <span class="highlight">Latitude and Longitude:</span> These two attributes are combined to determine the precise coordinates of each crater on the
+                Martian surface, anchoring each crater in its correct geographic context on the globe.
+            </li>
+            <li>
+                <span class="highlight">Diameter of the Craters:</span> This attribute is crucial for representing the relative sizes of the craters, offering viewers
+                a scale comparison that enhances understanding of the physical landscape of Mars.</p>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <span class="highlight">Marks:</span> 
+                <ul><li>
+                    The primary graphical elements (marks) in this visualization are the spherical representation of Mars and the
+                    annotated craters. Each crater is represented as a circle plotted on the surface of the 3D sphere, where the position
+                    and size of each circle are derived from real geographical data.
+                </li></ul>
+            </li>
+            <li>
+                <span class="highlight">Channels:</span>
+                <ol>
+                    <li>
+                        <span class="highlight">Position:</span> The longitude and latitude data from the dataset determine the position of each crater on the globe, effectively using
+                        spatial positioning as a channel to convey geographic accuracy.
+                    </li>
+                    <li>
+                        <span class="highlight">Size:</span> The diameter of each crater is proportionally scaled to represent the relative size of the crater on Mars, allowing for
+                        an intuitive understanding of the crater's scale in relation to others.
+                    </li>
+                    <li>
+                        <span class="highlight">Color:</span> Different colors are used to enhance the visual distinction between the surface of Mars and the craters. The craters
+                        might be highlighted with subtle shades to indicate depth or type, based on geological data.
+                    </li>
+                    <li>
+                        <span class="highlight">Text:</span> Tooltips serve as an informational channel that appears when a user hovers over a crater, providing the name and other
+                        potentially interesting details about the crater without cluttering the visual field.
+                    </li>
+                </ol>
+            </li>
+        </ul>
+    </div>
+    <div class="container section center">
+        <h6>References:</h6>
+        <ul>
+            <li><a href="https://observablehq.com/@d3/sketchy-earth?collection=@d3/d3-geo">Sketchy Earth on Observable</a></li>
+            <li><a href="https://observablehq.com/@d3/rotating-orthographic">Rotating Orthographic on Observable</a></li>
+            <li><a href="https://observablehq.com/@d3/orthographic-shading">Orthographic Shading on Observable</a></li>
+        </ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
